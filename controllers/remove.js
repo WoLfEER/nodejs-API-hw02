@@ -1,15 +1,14 @@
-const contactsOperation = require('../models/contacts')
-const httpError = require('../helpers/httpError');
+const {Contact} = require('../models/contact');
+const {httpError} = require('../helpers');
 
 const remove = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deletedContact = contactsOperation.removeContact(id);
+    const deletedContact = Contact.findByIdAndRemove(id);
     if (!deletedContact) {
       throw httpError(404);
     }
-    res.status(200).json( 
-      {"message": "contact deleted"});
+    res.status(200).json({ message: 'contact deleted' });
   } catch (error) {
     next(error);
   }

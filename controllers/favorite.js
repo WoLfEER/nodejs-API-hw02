@@ -1,7 +1,7 @@
 const {Contact} = require('../models/contact');
 const {httpError} = require('../helpers');
 
-const update = async (req, res, next) => {
+const updateFavorite = async (req, res, next) => {
   const { id } = req.params;
   const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {new : true})
   if (!updatedContact) {
@@ -10,4 +10,4 @@ const update = async (req, res, next) => {
   res.json(updatedContact);
 };
 
-module.exports = update; 
+module.exports = updateFavorite; 
