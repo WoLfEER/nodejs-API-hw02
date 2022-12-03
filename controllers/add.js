@@ -1,14 +1,7 @@
-const contactsOperation = require('../models/contacts');
-const httpError = require('../helpers/httpError');
-const { schema } = require('../helpers/schema');
+const {Contact} = require('../models/contact')
 
 const add = async (req, res, next) => {
-  const body = req.body;
-  const { error } = schema.validate(body);
-  if (error) {
-    throw httpError(400, error.message);
-  }
-  const newContact = await contactsOperation.addContact(body);
+  const newContact = await Contact.create(req.body);
   res.status(201).json(newContact);
 };
 
