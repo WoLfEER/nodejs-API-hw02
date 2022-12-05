@@ -21,23 +21,22 @@ const {
 const validationMiddleware = validation(schema);
 const validateFavoriteMiddleWare = validation(favoriteSchema);
 
-router.get('/',authentication, controllerWrapper(getAll));
+router.get('/', authentication, controllerWrapper(getAll));
 
-router.get('/:id', authentication, isValidId, controllerWrapper(getById));
+router.get('/:id', isValidId, controllerWrapper(getById));
 
 router.post('/', authentication, validationMiddleware, controllerWrapper(add));
 
 router.put(
   '/:id',
   isValidId,
-  authentication,
+
   validationMiddleware,
   controllerWrapper(updateById)
 );
 router.patch(
   '/:id/favorite',
   isValidId,
-  authentication,
   validateFavoriteMiddleWare,
   controllerWrapper(updateFavorite)
 );

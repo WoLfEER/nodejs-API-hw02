@@ -6,7 +6,7 @@ const isValidId = (req, res, next) => {
   if (!isValidObjectId(id)) {
     next(httpError(400, `Your id:${id}, is not valid, please enter valid id`));
   }
-  next()
+  next();
 };
 
 module.exports = isValidId;

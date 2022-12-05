@@ -19,11 +19,14 @@ const UserSchema = Schema(
       enum: ['starter', 'pro', 'business'],
       default: 'starter',
     },
-    token: {
-      type: String,
-      default: null,
+    token: { type: String, default: '' },
+
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
     },
   },
+
   { versionKey: false, timestamps: true }
 );
 
@@ -38,7 +41,7 @@ const login = Joi.object({
   password: Joi.string().required().min(2).max(24),
 });
 
-const schemas = {   
+const schemas = {
   login,
   signup,
 };
