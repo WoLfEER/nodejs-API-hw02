@@ -4,10 +4,9 @@ const Joi = require('joi');
 
 const UserSchema = Schema(
   {
-    name: {
+    password: {
       type: String,
-      required: [true, 'Name is required'],
-      trim: true,
+      required: [true, 'Password is required'],
     },
     email: {
       type: String,
@@ -15,30 +14,33 @@ const UserSchema = Schema(
       unique: true,
       trim: true,
     },
-    password: {
+    subscription: {
       type: String,
-      required: [true, 'Paswword is required'],
-      minLength: 2,
-      trim: true,
+      enum: ['starter', 'pro', 'business'],
+      default: 'starter',
+    },
+    token: {
+      type: String,
+      default: null,
     },
   },
   { versionKey: false, timestamps: true }
 );
 
-const register = Joi.object({
-  name: Joi.string().required(),
+const signup = Joi.object({
   email: Joi.string().required(),
   password: Joi.string().required().min(2).max(24),
+  subscription: Joi.string().required(),
 });
 
 const login = Joi.object({
-  name: Joi.string().required().min(2).max(24),
   email: Joi.string().required().min(2).max(24),
+  password: Joi.string().required().min(2).max(24),
 });
 
-const schemas = {
+const schemas = {   
   login,
-  register,
+  signup,
 };
 
 UserSchema.post('save', MongoServerErorr);

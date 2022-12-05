@@ -1,7 +1,11 @@
 const express = require('express');
-const {schema, favoriteSchema} = require('../../models/contact')
-const { controllerWrapper, validation, isValidId} = require('../../middlewars');
-require('dotenv').config();
+const { schema, favoriteSchema } = require('../../models/contact');
+const {
+  controllerWrapper,
+  validation,
+  isValidId,
+  authentication,
+} = require('../../middlewars');
 
 const router = express.Router();
 
@@ -11,21 +15,33 @@ const {
   add,
   removeById,
   updateById,
-  updateFavorite
+  updateFavorite,
 } = require('../../controllers');
 
 const validationMiddleware = validation(schema);
-const validateFavoriteMiddleWare = validation(favoriteSchema)
+const validateFavoriteMiddleWare = validation(favoriteSchema);
 
-router.get('/', controllerWrapper(getAll));
+router.get('/',authentication, controllerWrapper(getAll));
 
-router.get('/:id', isValidId, controllerWrapper(getById));
+router.get('/:id', authentication, isValidId, controllerWrapper(getById));
 
-router.post('/', validationMiddleware, controllerWrapper(add));
+router.post('/', authentication, validationMiddleware, controllerWrapper(add));
 
-router.put('/:id',isValidId, validationMiddleware, controllerWrapper(updateById));
-router.patch('/:id/favorite',isValidId, validateFavoriteMiddleWare, controllerWrapper(updateFavorite));
+router.put(
+  '/:id',
+  isValidId,
+  authentication,
+  validationMiddleware,
+  controllerWrapper(updateById)
+);
+router.patch(
+  '/:id/favorite',
+  isValidId,
+  authentication,
+  validateFavoriteMiddleWare,
+  controllerWrapper(updateFavorite)
+);
 
-router.delete('/:id',isValidId, controllerWrapper(removeById));
+router.delete('/:id', authentication, isValidId, controllerWrapper(removeById));
 
 module.exports = router;

@@ -1,14 +1,35 @@
 const { httpError } = require('../../helpers');
-const { User } = require('../../models/auth');
 const bcrypt = require('bcryptjs');
+const { User } = require('../../models/auth');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+const { SECRET_KEY } = process.env;
 
 const login = async (req, res, next) => {
-  const { password, email } = req.body;
-  const user = User.find({email})
-  if(!user) {
-      throw httpError(401, 'Email or login not valid')
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw httpError(401, 'Email or password is wrong');
   }
-  const passwordHash = bcrypt.hash(password, 10)
-  const passwordCompare = bcrypt(password, passwordHash)
+  const passwordCompare = await bcrypt.compare(password, user.password);
+  if (!passwordCompare) {   
+    throw httpError(401, 'Email or password is wrong');
+  }
+  const payload = { id: user._id };
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' });
   
+  try {
+    const badToken = 'asda34214sa';
+    const { id } = jwt.verify(token, SECRET_KEY);
+    console.log(id);
+    const badRes = jwt.verify(badToken, SECRET_KEY);
+    console.log(badRes);
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  res.json(token);
 };
+
+module.exports = login;
