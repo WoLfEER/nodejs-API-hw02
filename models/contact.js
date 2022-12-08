@@ -1,12 +1,12 @@
 const { Schema, model } = require('mongoose');
-const { MongoServerErorr } = require('../helpers');
+const { MongoServerError } = require('../helpers');
 const Joi = require('joi');
 
 const nameRegexp = /^\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+$/;
 const emailRegexp = /^.+@.+$/;
 const phoneRegexp = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/;
 
-const contactShema = new Schema(
+const contactSchema = new Schema(
   {
     name: {
       type: String,
@@ -32,6 +32,10 @@ const contactShema = new Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -47,8 +51,8 @@ const favoriteSchema = Joi.object({
   favorite: Joi.boolean().required(),
 });
 
-contactShema.post('save', MongoServerErorr);
+contactSchema.post('save', MongoServerError);
 
-const Contact = model('contact', contactShema);
+const Contact = model('contact', contactSchema);
 
 module.exports = { Contact, schema, favoriteSchema };
