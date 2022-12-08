@@ -1,15 +1,24 @@
 const { Schema, model } = require('mongoose');
-const { MongoServerErorr } = require('../helpers');
+const { MongoServerError } = require('../helpers');
 const Joi = require('joi');
+
+const passwordRegexp = /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/;
+const emailRegexp = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
 
 const UserSchema = Schema(
   {
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      minlength: 8,
+      required: [
+        true,
+        'A password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number with no spaces',
+      ],
+      match: passwordRegexp,
     },
     email: {
       type: String,
+      match: emailRegexp,
       required: [true, 'Email is required'],
       unique: true,
       trim: true,
@@ -20,33 +29,33 @@ const UserSchema = Schema(
       default: 'starter',
     },
     token: { type: String, default: '' },
-
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: 'user',
-    },
   },
 
   { versionKey: false, timestamps: true }
 );
 
 const signup = Joi.object({
-  email: Joi.string().required(),
-  password: Joi.string().required().min(2).max(24),
+  email: Joi.string().required().pattern(emailRegexp),
+  password: Joi.string().required().min(2).pattern(passwordRegexp),
   subscription: Joi.string().required(),
 });
 
 const login = Joi.object({
-  email: Joi.string().required().min(2).max(24),
-  password: Joi.string().required().min(2).max(24),
+  email: Joi.string().required().min(8).pattern(emailRegexp),
+  password: Joi.string().required().min(8).pattern(passwordRegexp),
+});
+
+const updateSubscription = Joi.object({
+  subscription: Joi.required().valid('[starter', 'pro', 'business'),
 });
 
 const schemas = {
   login,
   signup,
+  updateSubscription,
 };
 
-UserSchema.post('save', MongoServerErorr);
+UserSchema.post('save', MongoServerError);
 
 const User = model('user', UserSchema);
 
