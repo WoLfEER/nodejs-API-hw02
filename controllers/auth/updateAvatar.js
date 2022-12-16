@@ -28,14 +28,14 @@ const updateAvatar = async (req, res, next) => {
 
   await fs.unlink(tempDir);
 
-  await fs.rename(tempDir, resultUpload);
-  const avatarUrl = path.join('avatars', filename);
+  const avatarURL = path.join('avatars', filename);
 
-  await User.findByIdAndUpdate(_id, { avatarUrl });
+  const result = await User.findByIdAndUpdate(_id, { avatarURL });
+  if (!result) {
+    throw httpError(404);
+  }
 
-  res.json({
-    avatarUrl,
-  });
+  res.json({ avatarURL });
 };
 
 module.exports = updateAvatar;
