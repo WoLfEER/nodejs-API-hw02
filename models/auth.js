@@ -23,13 +23,26 @@ const UserSchema = Schema(
       unique: true,
       trim: true,
     },
+    avatarURL: {
+      type:String
+    },
     subscription: {
       type: String,
       enum: ['starter', 'pro', 'business'],
       default: 'starter',
     },
-    token: { type: String, default: '' },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: "",
+      required: [true, "Verify token is required"],
+    },
   },
+  
+
 
   { versionKey: false, timestamps: true }
 );
@@ -49,10 +62,15 @@ const updateSubscription = Joi.object({
   subscription: Joi.required().valid('[starter', 'pro', 'business'),
 });
 
+const verifyEmailSchema = Joi.object({
+  email: Joi.string().email().trim().pattern(emailRegexp).required(),
+});
+
 const schemas = {
   login,
   signup,
   updateSubscription,
+  verifyEmailSchema
 };
 
 UserSchema.post('save', MongoServerError);
